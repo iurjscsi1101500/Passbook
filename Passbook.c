@@ -1,27 +1,17 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include <unistd.h>
+#include <stdlib.h>
 
+#define MIN_NAME_LENGTH 3
 #define MAX_NAME_LENGTH 256
+#define MIN_EMAIL_LENGTH 7
 #define MAX_EMAIL_LENGTH 256
-#define MAX_PHONE_LENGTH 256
-#define MAX_DOB_LENGTH 256
+#define MAX_PHONE_LENGTH 11
+#define MAX_DOB_LENGTH 11
+#define MIN_PASSWORD_LENGTH 7
 #define MAX_PASSWORD_LENGTH 256
 #define MAX_USERS 10
-void file(){
-    FILE *ptr;
-    ptr = fopen("new_file.txt","r");
-    if(ptr == NULL){
-        printf("\n");
-        printf("\n");
-        printf("Error File dosent exist\nmaking file\n");
-        sleep(3);
-        system("touch new_file.txt");
-        printf("Created File\n\n");
-    }
-}
 
 typedef struct {
     char name[MAX_NAME_LENGTH];
@@ -31,6 +21,7 @@ typedef struct {
     char dob[MAX_DOB_LENGTH];
     char gender;
     char password[MAX_PASSWORD_LENGTH];
+    char username[MAX_NAME_LENGTH];
 } User;
 
 typedef struct {
@@ -38,102 +29,200 @@ typedef struct {
     int count;
 } UserDatabase;
 
+// Function to handle file creation if it doesn't exist
+void fileHandling() {
+    FILE *ptr = fopen("new_file.txt", "a");
+    if (ptr == NULL) {
+        printf("\nError: Failed to open/create file\n");
+        return;
+    }
+    fclose(ptr);
+}
+
+void get_gender(char *gender) {
+    while (true) {
+        printf("Enter gender (M/F): ");
+        scanf(" %c", gender);
+        getchar();
+        if (*gender == 'M' || *gender == 'F') {
+            break;
+        } else {
+            printf("Invalid option\n\n");
+        }
+    }
+}
+
+void get_Date_of_birth(char *dob) {
+    while (true) {
+        printf("Enter date of birth: ");
+        fgets(dob, MAX_DOB_LENGTH, stdin);
+        dob[strcspn(dob, "\n")] = '\0';
+        if (strlen(dob) == MAX_DOB_LENGTH - 1) {
+            break;
+        } else {
+            printf("Invalid option\n");
+        }
+    }
+}
+
+// Function to get username from the user
+void getUsername(char *username) {
+    while (true) {
+        printf("Enter Username (above %d and below %d characters): ", MIN_NAME_LENGTH, MAX_NAME_LENGTH);
+        fgets(username, MAX_NAME_LENGTH, stdin);
+        username[strcspn(username, "\n")] = '\0';
+
+        if (strlen(username) >= MIN_NAME_LENGTH && strlen(username) <= MAX_NAME_LENGTH) {
+            break;
+        } else {
+            printf("Invalid name length. Please try again.\n");
+        }
+    }
+}
+
+// Function to get first name from the user
 void getName(char *name) {
-    printf("----------------\n");
-    printf("Enter First name: ");
-    fgets(name, MAX_NAME_LENGTH, stdin);
-    name[strcspn(name, "\n")] = '\0'; // remove newline character
+    while (true) {
+        printf("Enter First name (above %d and below %d characters): ", MIN_NAME_LENGTH, MAX_NAME_LENGTH);
+        fgets(name, MAX_NAME_LENGTH, stdin);
+        name[strcspn(name, "\n")] = '\0';
+
+        if (strlen(name) >= MIN_NAME_LENGTH && strlen(name) <= MAX_NAME_LENGTH) {
+            break;
+        } else {
+            printf("Invalid name length. Please try again.\n");
+        }
+    }
 }
 
+// Function to get last name from the user
 void getLastname(char *last_name) {
-    printf("Enter last name: ");
-    fgets(last_name, MAX_NAME_LENGTH, stdin);
-    last_name[strcspn(last_name, "\n")] = '\0';
+    while (true) {
+        printf("Enter last name (above %d and below %d characters): ", MIN_NAME_LENGTH, MAX_NAME_LENGTH);
+        fgets(last_name, MAX_NAME_LENGTH, stdin);
+        last_name[strcspn(last_name, "\n")] = '\0';
+
+        if (strlen(last_name) >= MIN_NAME_LENGTH && strlen(last_name) <= MAX_NAME_LENGTH) {
+            break;
+        } else {
+            printf("Invalid name length. Please try again.\n");
+        }
+    }
 }
 
+// Function to get email from the user
 void getEmail(char *email) {
-    printf("Enter email: ");
-    fgets(email, MAX_EMAIL_LENGTH, stdin);
-    email[strcspn(email, "\n")] = '\0';
+    while (true) {
+        printf("Enter Email (above %d and below %d characters): ", MIN_EMAIL_LENGTH, MAX_EMAIL_LENGTH);
+        fgets(email, MAX_EMAIL_LENGTH, stdin);
+        email[strcspn(email, "\n")] = '\0';
+
+        if (strlen(email) >= MIN_EMAIL_LENGTH && strlen(email) <= MAX_EMAIL_LENGTH) {
+            break;
+        } else {
+            printf("Invalid email length. Please try again.\n");
+        }
+    }
 }
 
+// Function to get phone number from the user
 void getPhoneNumber(char *phone_number) {
-    printf("Enter phone number: ");
-    fgets(phone_number, MAX_PHONE_LENGTH, stdin);
-    phone_number[strcspn(phone_number, "\n")] = '\0';
+    while (true) {
+        printf("Enter phone number (below %d digits): ", MAX_PHONE_LENGTH - 1);
+        fgets(phone_number, MAX_PHONE_LENGTH, stdin);
+        phone_number[strcspn(phone_number, "\n")] = '\0';
+
+        if (strlen(phone_number) < MAX_PHONE_LENGTH) {
+            break;
+        } else {
+            printf("Invalid phone number length. Please try again.\n");
+        }
+    }
 }
 
-void getDOB(char *dob) {
-    printf("Enter Date Of Birth: ");
-    fgets(dob, MAX_DOB_LENGTH, stdin);
-    dob[strcspn(dob, "\n")] = '\0';
-}
-
-void getGender(char *gender) {
-    printf("Enter gender (M/F): ");
-    scanf(" %c", gender);
-    getchar(); // consume the newline character
-}
-
+// Function to get password from the user
 void getPassword(char *password) {
-    printf("Enter password: ");
-    fgets(password, MAX_PASSWORD_LENGTH, stdin);
-    password[strcspn(password, "\n")] = '\0';
-    printf("----------------\n");
+    while (true) {
+        printf("Enter Password (above %d and below %d characters): ", MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH - 1);
+        fgets(password, MAX_PASSWORD_LENGTH, stdin);
+        password[strcspn(password, "\n")] = '\0';
+
+        if (strlen(password) >= MIN_PASSWORD_LENGTH && strlen(password) <= MAX_PASSWORD_LENGTH) {
+            break;
+        } else {
+            printf("Invalid password length. Please try again.\n");
+        }
+    }
 }
 
+// Function to validate the password
 bool validatePassword(const User *user, const char *password) {
     return strcmp(user->password, password) == 0;
 }
 
+// Function to check if user data is empty
 bool isUserDataEmpty(const User *user) {
-    return (user->name[0] == '\0' || user->last_name[0] == '\0' || user->email[0] == '\0' ||
-            user->phone_number[0] == '\0' || user->dob[0] == '\0' || user->gender == '\0');
+    if (user->name[0] == '\0' || user->last_name[0] == '\0' || user->email[0] == '\0' ||
+        user->phone_number[0] == '\0' || user->dob[0] == '\0' || user->gender == '\0') {
+        return true;
+    }
+    return false;
 }
 
+// Function to display user information (admin only)
 void displayUser(const User *user) {
-    char password1[MAX_PASSWORD_LENGTH];
-    printf("wont use database dat it will use program data\n");
-    printf("Enter password: ");
-    fgets(password1, sizeof(password1), stdin);
-    password1[strcspn(password1, "\n")] = '\0';
-
-    if (!validatePassword(user, password1)) {
-        printf("Error: Password is incorrect\n");
+    FILE *file = fopen("new_file.txt", "r");
+    if (file == NULL) {
+        printf("Error: Failed to open file\n");
         return;
     }
 
-    if (isUserDataEmpty(user)) {
-        printf("Error: User data is empty\n");
+    char password[MAX_PASSWORD_LENGTH];
+    printf("Admin Enter Password: ");
+    fgets(password, sizeof(password), stdin);
+    password[strcspn(password, "\n")] = '\0';
+
+    if (strcmp(password, "Atharvaa1101") != 0) {
+        printf("Unauthorized access\n");
+        fclose(file);
         return;
     }
 
-    printf("--------------------------------\n");
-    printf("First Name: %s\n", user->name);
-    printf("Last Name: %s\n", user->last_name);
-    printf("Email: %s\n", user->email);
-    printf("Phone Number: %s\n", user->phone_number);
-    printf("Date of birth: %s\n", user->dob);
-    printf("Gender: %c\n", user->gender);
-    printf("--------------------------------\n");
+    char line[MAX_USERS * 1000];
+    while (fgets(line, sizeof(line), file) != NULL) {
+        printf("%s", line);
+    }
+
+    fclose(file);
 }
 
+// Function to modify user information
 void modify(User *user) {
-    FILE *fptr;
-    fptr = fopen("new_file.txt","a");
+    if (isUserDataEmpty(user)) {
+        printf("Please create your account\n");
+        return;
+    }
+    FILE *file = fopen("new_file.txt", "a");
+    if (file == NULL) {
+        printf("Error: Failed to open file\n");
+        return;
+    }
+
     char pass[MAX_PASSWORD_LENGTH];
     printf("Enter password: ");
     fgets(pass, sizeof(pass), stdin);
     pass[strcspn(pass, "\n")] = '\0';
+
     if (!validatePassword(user, pass)) {
         printf("Error: Password is incorrect\n");
+        fclose(file);
         return;
     }
 
-    printf("Enter what you want to modify (N for Name, L for Last name, E for Email, H for Phone, D for Date of Birth, G for Gender): ");
+    printf("Enter what you want to modify (N for Name, L for Last name, E for Email, H for Phone, D for Date of Birth, G for Gender, U for Username): ");
     char option;
     scanf(" %c", &option);
-    getchar(); // consume the newline character
+    getchar();
 
     switch (option) {
         case 'N':
@@ -149,111 +238,103 @@ void modify(User *user) {
             getPhoneNumber(user->phone_number);
             break;
         case 'D':
-            getDOB(user->dob);
+            get_Date_of_birth(user->dob);
             break;
         case 'G':
-            getGender(&user->gender);
+            get_gender(&user->gender);
+            break;
+        case 'U':
+            getUsername(user->username);
             break;
         default:
             printf("Invalid option\n");
             break;
     }
-    fprintf(fptr, "MODIFYED:\n Name: %s\nLast name: %s\nEmail: %s\nPhone number: %s\nDate of birth: %s\nGender: %c\n\n",
-            user->name, user->last_name, user->email, user->phone_number, user->dob, user->gender);
-    fclose(fptr);
+
+    fprintf(file, "\n\nMODIFIED:\nUsername: %s\nName: %s\nLast name: %s\nEmail: %s\nPhone number: %s\nDate of birth: %s\nGender: %c\n\n",
+            user->username, user->name, user->last_name, user->email, user->phone_number, user->dob, user->gender);
+
+    fclose(file);
 }
 
+// Function to print the main menu
 void printMenu() {
     printf("----------------\n");
     printf("\nSimple Database\n");
     printf("\n");
     printf("1. Create Account\n");
-    printf("2. Login\n");
-    printf("3. Display Account\n");
-    printf("4. Modify Account\n");
-    printf("5. Exit\n");
+    printf("2. Display Account (only admin)\n");
+    printf("3. Modify Account\n");
+    printf("4. Exit\n");
     printf("----------------\n");
     printf("Enter your choice: ");
 }
 
+// Function to create a new user account
 void createAccount(UserDatabase *db) {
-    FILE *fptr;
-    fptr = fopen("new_file.txt","a");
     if (db->count == MAX_USERS) {
         printf("Error: Maximum number of users reached\n");
         return;
     }
 
     User *user = &db->users[db->count];
-
     getName(user->name);
     getLastname(user->last_name);
     getEmail(user->email);
     getPhoneNumber(user->phone_number);
-    getDOB(user->dob);
-    getGender(&user->gender);
+    get_Date_of_birth(user->dob);
+    get_gender(&user->gender);
+    getUsername(user->username);
     getPassword(user->password);
-    fprintf(fptr, "Name: %s\nLast name: %s\nEmail: %s\nPhone number: %s\nDate of birth: %s\nGender: %c\n\n",
-            user->name, user->last_name, user->email, user->phone_number, user->dob, user->gender);
 
-    db->count++;
-    fclose(fptr);
-}
-
-void login(UserDatabase *db) {
-    char email[MAX_EMAIL_LENGTH];
-    char password[MAX_PASSWORD_LENGTH];
-
-    printf("----------------\n");
-    printf("Enter email: ");
-    fgets(email, MAX_EMAIL_LENGTH, stdin);
-    email[strcspn(email, "\n")] = '\0';
-
-    printf("Enter password: ");
-    fgets(password, MAX_PASSWORD_LENGTH, stdin);
-    password[strcspn(password, "\n")] = '\0';
-    printf("----------------\n");
-
-    for (int i = 0; i < db->count; i++) {
-        User *user = &db->users[i];
-        if (strcmp(user->email, email) == 0 && strcmp(user->password, password) == 0) {
-            displayUser(user);
-            return;
-        }
+    if (isUserDataEmpty(user)) {
+        printf("Error\n");
+        return;
     }
 
-    printf("Error: Invalid email or password\n");
+    FILE *file = fopen("new_file.txt", "a");
+    if (file == NULL) {
+        printf("Error: Failed to open file\n");
+        return;
+    }
+
+    fprintf(file, "\n\nName: %s\nLast name: %s\nEmail: %s\nPhone number: %s\nDate of birth: %s\nGender: %c\nUsername: %s\n\n",
+            user->name, user->last_name, user->email, user->phone_number, user->dob, user->gender, user->username);
+
+    fclose(file);
+
+    db->count++;
 }
 
+// The main function
 int main() {
-    file();
     UserDatabase db;
     db.count = 0;
-    int choice;
+    fileHandling();
 
-    while (1) {
+    while (true) {
         printMenu();
+
+        int choice;
         scanf("%d", &choice);
-        getchar(); // consume the newline character
+        getchar();
 
         switch (choice) {
             case 1:
-                createAccount(&db);
+                if (isUserDataEmpty(&db.users[db.count])) {
+                    createAccount(&db);
+                } else {
+                    printf("Already Created Account\n");
+                }
                 break;
             case 2:
-                login(&db);
-                break;
-            case 3:
                 displayUser(&db.users[0]);
                 break;
-            case 4:
+            case 3:
                 modify(&db.users[0]);
                 break;
-            case 5:
-                printf("--------------------------------\n");
-                printf("Thank You For Choosing Simple Database\n");
-                printf("Goodbye\n");
-                printf("--------------------------------\n");
+            case 4:
+                printf("Exiting program...\n");
                 return 0;
             default:
                 printf("Invalid choice\n");
