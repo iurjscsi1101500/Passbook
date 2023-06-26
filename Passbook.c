@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #define MIN_NAME_LENGTH 3
 #define MAX_NAME_LENGTH 256
@@ -33,7 +34,9 @@ typedef struct {
 void fileHandling() {
     FILE *ptr = fopen("new_file.txt", "a");
     if (ptr == NULL) {
-        printf("\nError: Failed to open/create file\n");
+        printf("Error Opening file\nCreateing File\n");
+        system("touch new_file.txt");
+        printf("file created succsusfully\n");
         return;
     }
     fclose(ptr);
@@ -128,11 +131,11 @@ void getEmail(char *email) {
 // Function to get phone number from the user
 void getPhoneNumber(char *phone_number) {
     while (true) {
-        printf("Enter phone number (below %d digits): ", MAX_PHONE_LENGTH - 1);
+        printf("Enter phone number (only %d digits): ", MAX_PHONE_LENGTH - 1);
         fgets(phone_number, MAX_PHONE_LENGTH, stdin);
         phone_number[strcspn(phone_number, "\n")] = '\0';
 
-        if (strlen(phone_number) < MAX_PHONE_LENGTH) {
+        if (strlen(phone_number) == MAX_PHONE_LENGTH-1) {
             break;
         } else {
             printf("Invalid phone number length. Please try again.\n");
@@ -188,10 +191,7 @@ void displayUser(const User *user) {
         return;
     }
 
-    char line[MAX_USERS * 1000];
-    while (fgets(line, sizeof(line), file) != NULL) {
-        printf("%s", line);
-    }
+    system("cat new_file.txt");
 
     fclose(file);
 }
@@ -257,19 +257,6 @@ void modify(User *user) {
     fclose(file);
 }
 
-// Function to print the main menu
-void printMenu() {
-    printf("----------------\n");
-    printf("\nSimple Database\n");
-    printf("\n");
-    printf("1. Create Account\n");
-    printf("2. Display Account (only admin)\n");
-    printf("3. Modify Account\n");
-    printf("4. Exit\n");
-    printf("----------------\n");
-    printf("Enter your choice: ");
-}
-
 // Function to create a new user account
 void createAccount(UserDatabase *db) {
     if (db->count == MAX_USERS) {
@@ -313,7 +300,24 @@ int main() {
     fileHandling();
 
     while (true) {
-        printMenu();
+        unsigned int time_set = 1;
+        sleep(time_set);
+        printf("----------------\n");
+        sleep(time_set);
+        printf("\nSimple Database\n");
+        sleep(time_set);
+        printf("\n");
+        printf("1. Create Account\n");
+        sleep(time_set);
+        printf("2. Display Account (only admin)\n");
+        sleep(time_set);
+        printf("3. Modify Account\n");
+        sleep(time_set);
+        printf("4. Exit\n");
+        sleep(time_set);
+        printf("----------------\n");
+        sleep(time_set);
+        printf("Enter your choice: ");
 
         int choice;
         scanf("%d", &choice);
@@ -321,11 +325,7 @@ int main() {
 
         switch (choice) {
             case 1:
-                if (isUserDataEmpty(&db.users[db.count])) {
-                    createAccount(&db);
-                } else {
-                    printf("Already Created Account\n");
-                }
+                createAccount(&db);
                 break;
             case 2:
                 displayUser(&db.users[0]);
